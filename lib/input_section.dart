@@ -42,6 +42,10 @@ class _InputSectionState extends State<InputSection> {
     });
   }
 
+  void performConversion() {
+    print("CONVERT");
+  }
+
   Widget buildRow(String text, bool isBase) {
     Map<String, dynamic> currency = isBase ? _baseCurrency : _targetCurrency;
     const flexSize = 3;
@@ -85,11 +89,13 @@ class _InputSectionState extends State<InputSection> {
   @override
   Widget build(BuildContext context) {
 
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.3,
-      child: Align(
-        alignment: Alignment.center,
+    return Align(
+      alignment: Alignment.center,
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.3,
+        width: MediaQuery.of(context).size.width * 0.9,
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Spacer(),
             Flexible(
@@ -110,6 +116,14 @@ class _InputSectionState extends State<InputSection> {
               child: buildRow('To:', false),
             ),
             const Spacer(),
+            ElevatedButton(
+              onPressed: performConversion,
+              child: const Text("Convert"),
+              style: ElevatedButton.styleFrom(
+                alignment: Alignment.center,
+                minimumSize: const Size.fromHeight(45),
+              ),
+            ),
           ],
         ),
       ),

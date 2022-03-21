@@ -4,16 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class InputSection extends StatefulWidget {
-  const InputSection({Key? key, required this.onTextChanged,}) : super(key: key);
-  final Function(String?) onTextChanged;
+  const InputSection({
+    Key? key,
+    required this.onTextChanged,
+    required this.performConversion,
+  }) : super(key: key);
+  final Function(String) onTextChanged;
+  final Function(String, String) performConversion;
 
   @override
   _InputSectionState createState() => _InputSectionState();
 }
 
 class _InputSectionState extends State<InputSection> {
-  Map<String, dynamic> _baseCurrency = {"emoji": "🇺🇸", "symbol": "\$"};
-  Map<String, dynamic> _targetCurrency = {"emoji": "🇪🇺", "symbol": "€"};
+  Map<String, dynamic> _baseCurrency = {"code": "USD",
+    "emoji": "🇺🇸", "symbol": "\$"};
+  Map<String, dynamic> _targetCurrency = {"code": "EUR",
+    "emoji": "🇪🇺", "symbol": "€"};
+  final _baseController = TextEditingController(text: '1');
 
   @override
   void initState() {
@@ -21,7 +29,11 @@ class _InputSectionState extends State<InputSection> {
   }
 
   void selectCurrency(Currency currency, bool isBase) {
-    var newCurrency = {"emoji": CurrencyUtils.currencyToEmoji(currency), "symbol": currency.symbol};
+    var newCurrency = {
+      "code": currency.code,
+      "emoji": CurrencyUtils.currencyToEmoji(currency),
+      "symbol": currency.symbol
+    };
     if (isBase) {
       setState(() {
         _baseCurrency = newCurrency;
@@ -40,10 +52,6 @@ class _InputSectionState extends State<InputSection> {
       _baseCurrency = newBase;
       _targetCurrency = newTarget;
     });
-  }
-
-  void performConversion() {
-    print("CONVERT");
   }
 
   Widget buildRow(String text, bool isBase) {
@@ -77,6 +85,7 @@ class _InputSectionState extends State<InputSection> {
           Flexible(
             flex: flexSize,
             child: TextField(
+              controller: _baseController,
               keyboardType: TextInputType.number,
               onChanged: widget.onTextChanged,
             ),
@@ -117,7 +126,7 @@ class _InputSectionState extends State<InputSection> {
             ),
             const Spacer(),
             ElevatedButton(
-              onPressed: performConversion,
+              onPressed: () => widget.performConversion(_baseCurrency["code"], _targetCurrency["code"]),
               child: const Text("Convert"),
               style: ElevatedButton.styleFrom(
                 alignment: Alignment.center,
@@ -128,5 +137,11 @@ class _InputSectionState extends State<InputSection> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _baseController.dispose();
+    super.dispose();
   }
 }

@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'conversion.dart';
 import 'input_section.dart';
 
 void main() {
@@ -31,8 +34,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String _conversionResult = "0";
-  String _baseAmount = "1";
+  double _conversionResult = 0;
+  double _baseAmount = 1;
 
   Uri getURL(String base, String target) {
     String q = base + '_' + target;
@@ -46,16 +49,18 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> performConversion(String base, String target) async {
-    var response = await http.get(getURL(base, target));
+    http.Response response = await http.get(getURL(base, target));
     if (response.statusCode == 200) {
-      print("SUCCESS");
-      print(response.body);
+      var conversion = Conversion.fromJson(jsonDecode(response.body));
+      setState(() {
+        _conversionResult = conversion.conversionRate * _baseAmount;
+      });
     }
   }
 
   void onBaseAmountChanged(String amount) {
     setState(() {
-      _baseAmount = amount;
+      _baseAmount = double.tryParse(amount)!;
     });
   }
 
@@ -72,7 +77,10 @@ class _MyHomePageState extends State<MyHomePage> {
             onTextChanged: onBaseAmountChanged,
             performConversion: performConversion,
           ),
-          Text(_conversionResult, style: const TextStyle(fontSize: 32)),
+          Text(
+            _conversionResult.toString(),
+            style: const TextStyle(fontSize: 32),
+          ),
         ],
       ),
     );

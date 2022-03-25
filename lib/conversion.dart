@@ -1,5 +1,5 @@
 class Conversion {
-  final double conversionRate;
+  final Map<String, dynamic> conversionRate;
 
   const Conversion({
     required this.conversionRate,

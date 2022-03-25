@@ -36,6 +36,7 @@ dependencies:
   currency_picker: ^2.0.8
   material_design_icons_flutter: 5.0.6595
   http: ^0.13.4
+  fl_chart: ^0.50.0
 
 dev_dependencies:
   flutter_test:

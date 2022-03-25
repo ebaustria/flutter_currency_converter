@@ -17,10 +17,10 @@ class InputSection extends StatefulWidget {
 }
 
 class _InputSectionState extends State<InputSection> {
-  Map<String, dynamic> _baseCurrency = {"code": "USD",
-    "emoji": "🇺🇸", "symbol": "\$"};
-  Map<String, dynamic> _targetCurrency = {"code": "EUR",
-    "emoji": "🇪🇺", "symbol": "€"};
+  Map<String, dynamic> _baseCurrency = {'code': 'USD',
+    'emoji': '🇺🇸', 'symbol': '\$'};
+  Map<String, dynamic> _targetCurrency = {'code': 'EUR',
+    'emoji': '🇪🇺', 'symbol': '€'};
   final _baseController = TextEditingController(text: '1');
 
   @override
@@ -30,9 +30,9 @@ class _InputSectionState extends State<InputSection> {
 
   void selectCurrency(Currency currency, bool isBase) {
     var newCurrency = {
-      "code": currency.code,
-      "emoji": CurrencyUtils.currencyToEmoji(currency),
-      "symbol": currency.symbol
+      'code': currency.code,
+      'emoji': CurrencyUtils.currencyToEmoji(currency),
+      'symbol': currency.symbol
     };
     if (isBase) {
       setState(() {
@@ -71,13 +71,13 @@ class _InputSectionState extends State<InputSection> {
         Flexible(
           flex: flexSize,
           child: ElevatedButton(
-              onPressed: () {
-                showCurrencyPicker(
-                    context: context,
-                    onSelect: (currency) => selectCurrency(currency, isBase),
-                );
-              },
-              child: Text(currency["emoji"] + "     " + currency["symbol"])
+            onPressed: () {
+              showCurrencyPicker(
+                context: context,
+                onSelect: (currency) => selectCurrency(currency, isBase),
+              );
+            },
+            child: Text(currency['emoji'] + '     ' + currency['symbol'])
           ),
         ),
         const Spacer(),
@@ -126,8 +126,8 @@ class _InputSectionState extends State<InputSection> {
             ),
             const Spacer(),
             ElevatedButton(
-              onPressed: () => widget.performConversion(_baseCurrency["code"], _targetCurrency["code"]),
-              child: const Text("Convert"),
+              onPressed: () => widget.performConversion(_baseCurrency['code'], _targetCurrency['code']),
+              child: const Text('Convert'),
               style: ElevatedButton.styleFrom(
                 alignment: Alignment.center,
                 minimumSize: const Size.fromHeight(45),

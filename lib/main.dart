@@ -1,6 +1,6 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_currency_converter/conversion_chart.dart';
 import 'package:http/http.dart' as http;
 import 'conversion.dart';
 import 'input_section.dart';
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       title: 'Currency Converter',
       theme: ThemeData(
         primarySwatch: Colors.indigo,
-        scaffoldBackgroundColor: Colors.blueGrey,
+        // scaffoldBackgroundColor: Colors.blueGrey,
       ),
       home: const MyHomePage(title: 'Currency Converter'),
     );
@@ -35,14 +35,23 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   double _conversionResult = 0;
+  List<MapEntry<String, dynamic>> _historicalConversions = [];
   double _baseAmount = 1;
 
   Uri getURL(String base, String target) {
     String q = base + '_' + target;
+    DateTime today = DateTime.now();
+    DateTime startDate = today.subtract(const Duration(days: 8));
+    String endDate = today.year.toString() + '-' + today.month.toString()
+        + '-' + today.day.toString();
+    String date = startDate.year.toString() + '-' + startDate.month.toString()
+        + '-' + startDate.day.toString();
     return Uri.https('free.currconv.com', '/api/v7/convert',
       {
         'q': q,
         'compact': 'ultra',
+        'date': date,
+        'endDate': endDate,
         'apiKey': '3fc84b927a85e151b011',
       },
     );
@@ -53,8 +62,11 @@ class _MyHomePageState extends State<MyHomePage> {
     if (response.statusCode == 200) {
       var conversion = Conversion.fromJson(jsonDecode(response.body));
       setState(() {
-        _conversionResult = conversion.conversionRate * _baseAmount;
+        _historicalConversions = conversion.conversionRate.entries.toList();
+        _conversionResult = conversion.conversionRate.values.last * _baseAmount;
       });
+    } else {
+      throw Exception('Failed to fetch data');
     }
   }
 
@@ -80,6 +92,11 @@ class _MyHomePageState extends State<MyHomePage> {
           Text(
             _conversionResult.toString(),
             style: const TextStyle(fontSize: 32),
+          ),
+          SizedBox(
+            height: 200,
+            width: 300,
+            child: ConversionChart(conversionData: _historicalConversions,),
           ),
         ],
       ),

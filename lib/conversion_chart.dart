@@ -49,7 +49,7 @@ class _ConversionChartState extends State<ConversionChart> {
       fontSize: 10,
     );
     int precisionLevel = value.toString().split('.')[0].length > 1 ? 1 : 4;
-    if (value > maximumRate() || value < minimumRate()) {
+    if (value == maximumRate() + horizontalInterval() || value == minimumRate() - horizontalInterval()) {
       return Container();
     }
     return Text(value.toStringAsFixed(precisionLevel), style: style, textAlign: TextAlign.center);
@@ -150,7 +150,7 @@ class _ConversionChartState extends State<ConversionChart> {
           LineChartBarData(
             spots: processBarData(),
             isCurved: true,
-            barWidth: 5,
+            barWidth: 4,
             isStrokeCapRound: true,
             dotData: FlDotData(
               show: false,

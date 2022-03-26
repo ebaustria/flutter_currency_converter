@@ -38,6 +38,12 @@ class _MyHomePageState extends State<MyHomePage> {
   List<MapEntry<String, dynamic>> _historicalConversions = [];
   double _baseAmount = 1;
 
+  @override
+  void initState() {
+    super.initState();
+    performConversion('USD', 'EUR');
+  }
+
   Uri getURL(String base, String target) {
     String q = base + '_' + target;
     DateTime today = DateTime.now();

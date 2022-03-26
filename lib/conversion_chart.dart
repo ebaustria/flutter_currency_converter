@@ -1,7 +1,7 @@
-import 'package:currency_picker/currency_picker.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'dart:math';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class ConversionChart extends StatefulWidget {
@@ -46,39 +46,61 @@ class _ConversionChartState extends State<ConversionChart> {
     const style = TextStyle(
       color: Color(0xff67727d),
       fontWeight: FontWeight.bold,
-      fontSize: 15,
+      fontSize: 10,
     );
-    String text;
+    int precisionLevel = value.toString().split('.')[0].length > 1 ? 1 : 4;
+    if (value > maximumRate() || value < minimumRate()) {
+      return Container();
+    }
+    return Text(value.toStringAsFixed(precisionLevel), style: style, textAlign: TextAlign.center);
+  }
+
+  Widget bottomTitleWidgets(double value, TitleMeta meta) {
+    const style = TextStyle(
+      color: Color(0xff68737d),
+      fontWeight: FontWeight.bold,
+      fontSize: 10,
+    );
+    Widget text;
     switch (value.toInt()) {
-      case 1:
-        text = '10K';
+      case 0:
+        text = Text(widget.conversionData[0].key, style: style);
         break;
-      case 3:
-        text = '30k';
+      case 4:
+        text = Text(widget.conversionData[4].key, style: style);
         break;
-      case 5:
-        text = '50k';
+      case 8:
+        text = Text(widget.conversionData[8].key, style: style);
         break;
       default:
-        return Container();
+        text = const Text('', style: style);
+        break;
     }
-    return Text(text, style: style, textAlign: TextAlign.left);
+
+    return Padding(
+        child: Transform.rotate(
+          angle: 15 * pi / 180,
+          child: text,
+        ),
+        padding: const EdgeInsets.only(top: 9.0),
+    );
   }
+
+  double horizontalInterval() => (maximumRate() - minimumRate()) / 10;
 
   @override
   Widget build(BuildContext context) {
-
     return LineChart(
       LineChartData(
         minX: 0,
         maxX: 8,
-        minY: minimumRate(),
-        maxY: maximumRate(),
+        minY: minimumRate() - horizontalInterval(),
+        maxY: maximumRate() + horizontalInterval(),
         gridData: FlGridData(
           show: true,
           drawVerticalLine: true,
           drawHorizontalLine: true,
-          horizontalInterval: (maximumRate() - minimumRate()) / 10,
+          horizontalInterval: horizontalInterval(),
           verticalInterval: 1,
           getDrawingHorizontalLine: (value) {
             return FlLine(
@@ -103,6 +125,7 @@ class _ConversionChartState extends State<ConversionChart> {
           ),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
+              getTitlesWidget: bottomTitleWidgets,
               showTitles: true,
               interval: 1,
               reservedSize: 24,
@@ -113,7 +136,7 @@ class _ConversionChartState extends State<ConversionChart> {
             sideTitles: SideTitles(
               getTitlesWidget: leftTitleWidgets,
               showTitles: true,
-              interval: (maximumRate() - minimumRate()) / 10,
+              interval: horizontalInterval(),
               reservedSize: 34,
             ),
             axisNameWidget: const Text('Conversion Rate'),

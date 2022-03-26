@@ -63,7 +63,10 @@ class _InputSectionState extends State<InputSection> {
         Flexible(
           child: Text(
             text,
-            style: const TextStyle(fontSize: 18),
+            style: const TextStyle(
+              fontSize: 18,
+              color: Colors.white,
+            ),
           ),
           flex: flexSize,
         ),
@@ -88,6 +91,12 @@ class _InputSectionState extends State<InputSection> {
               controller: _baseController,
               keyboardType: TextInputType.number,
               onChanged: widget.onTextChanged,
+              style: const TextStyle(color: Colors.white,),
+              decoration: const InputDecoration(
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                ),
+              ),
             ),
           ),
         ],

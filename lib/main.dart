@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
       title: 'Currency Converter',
       theme: ThemeData(
         primarySwatch: Colors.indigo,
+        scaffoldBackgroundColor: const Color(0xff232d37),
         // scaffoldBackgroundColor: Colors.blueGrey,
       ),
       home: const MyHomePage(title: 'Currency Converter'),
@@ -82,6 +83,17 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  List<Color> handleGradientColors() {
+    return [
+      const Color(0xff23b6e6),
+      if (_historicalConversions.first.value > _historicalConversions.last.value) ...[
+        Colors.red,
+      ] else ...[
+        const Color(0xff02d39a),
+      ],
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,12 +109,15 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Text(
             _conversionResult.toString(),
-            style: const TextStyle(fontSize: 32),
+            style: const TextStyle(fontSize: 32, color: Colors.white,),
           ),
           SizedBox(
-            height: 200,
+            height: 250,
             width: 300,
-            child: ConversionChart(conversionData: _historicalConversions,),
+            child: ConversionChart(
+              conversionData: _historicalConversions,
+              gradientColors: handleGradientColors(),
+            ),
           ),
         ],
       ),

@@ -8,8 +8,10 @@ class ConversionChart extends StatefulWidget {
   const ConversionChart({
     Key? key,
     required this.conversionData,
+    required this.gradientColors,
   }) : super(key: key);
   final List<MapEntry<String, dynamic>> conversionData;
+  final List<Color> gradientColors;
 
   @override
   _ConversionChartState createState() => _ConversionChartState();
@@ -96,6 +98,7 @@ class _ConversionChartState extends State<ConversionChart> {
         maxX: 8,
         minY: minimumRate() - horizontalInterval(),
         maxY: maximumRate() + horizontalInterval(),
+        clipData: FlClipData.vertical(),
         gridData: FlGridData(
           show: true,
           drawVerticalLine: true,
@@ -117,11 +120,19 @@ class _ConversionChartState extends State<ConversionChart> {
         ),
         titlesData: FlTitlesData(
           show: true,
+
           rightTitles: AxisTitles(
             sideTitles: SideTitles(showTitles: false),
           ),
           topTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
+            sideTitles: SideTitles(
+              showTitles: false,
+              getTitlesWidget: (value, meta) => Container(),
+            ),
+            axisNameWidget: const Text(
+              'Conversion Rates USD => EUR',
+              style: TextStyle(color: Colors.white,),
+            ),
           ),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
@@ -130,7 +141,10 @@ class _ConversionChartState extends State<ConversionChart> {
               interval: 1,
               reservedSize: 24,
             ),
-            axisNameWidget: const Text('Dates'),
+            axisNameWidget: const Text(
+              'Dates',
+              style: TextStyle(color: Colors.white,),
+            ),
           ),
           leftTitles: AxisTitles(
             sideTitles: SideTitles(
@@ -139,7 +153,10 @@ class _ConversionChartState extends State<ConversionChart> {
               interval: horizontalInterval(),
               reservedSize: 34,
             ),
-            axisNameWidget: const Text('Conversion Rate'),
+            axisNameWidget: const Text(
+              'Conversion Rate',
+              style: TextStyle(color: Colors.white,),
+            ),
           ),
         ),
         borderData: FlBorderData(
@@ -151,12 +168,24 @@ class _ConversionChartState extends State<ConversionChart> {
             spots: processBarData(),
             isCurved: true,
             barWidth: 4,
+            gradient: LinearGradient(
+              colors: widget.gradientColors,
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
             isStrokeCapRound: true,
             dotData: FlDotData(
               show: false,
             ),
             belowBarData: BarAreaData(
               show: true,
+              gradient: LinearGradient(
+                colors: widget.gradientColors
+                    .map((color) => color.withOpacity(0.3))
+                    .toList(),
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
             ),
           ),
         ],

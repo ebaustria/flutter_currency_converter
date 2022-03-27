@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_currency_converter/currency_data.dart';
 import 'dart:math';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -9,9 +10,13 @@ class ConversionChart extends StatefulWidget {
     Key? key,
     required this.conversionData,
     required this.gradientColors,
+    required this.baseCurrency,
+    required this.targetCurrency,
   }) : super(key: key);
   final List<MapEntry<String, dynamic>> conversionData;
   final List<Color> gradientColors;
+  final CurrencyData baseCurrency;
+  final CurrencyData targetCurrency;
 
   @override
   _ConversionChartState createState() => _ConversionChartState();
@@ -129,8 +134,8 @@ class _ConversionChartState extends State<ConversionChart> {
               showTitles: false,
               getTitlesWidget: (value, meta) => Container(),
             ),
-            axisNameWidget: const Text(
-              'Conversion Rates USD => EUR',
+            axisNameWidget: Text(
+              'Conversion Rates ' + widget.baseCurrency.code + ' => ' + widget.targetCurrency.code,
               style: TextStyle(color: Colors.white,),
             ),
           ),

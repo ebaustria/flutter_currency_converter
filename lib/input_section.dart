@@ -14,15 +14,15 @@ class InputSection extends StatelessWidget {
     required this.targetCurrency,
     required this.onSwapCurrencies,
     required this.onSelectCurrency,
+    required this.baseAmount,
   }) : super(key: key);
   final Function(String) onTextChanged;
-  final Function(String, String) performConversion;
+  final Function() performConversion;
   final Function() onSwapCurrencies;
   final Function(Currency currency, bool isBase) onSelectCurrency;
   final CurrencyData baseCurrency;
   final CurrencyData targetCurrency;
-
-  final _baseController = TextEditingController(text: '1');
+  final String baseAmount;
 
   Widget buildRow(String text, BuildContext context, bool isBase) {
     CurrencyData currency = isBase ? baseCurrency : targetCurrency;
@@ -57,8 +57,9 @@ class InputSection extends StatelessWidget {
         if (isBase) ...[
           Flexible(
             flex: flexSize,
-            child: TextField(
-              controller: _baseController,
+            child: TextFormField(
+              onFieldSubmitted: (text) => performConversion(),
+              initialValue: baseAmount,
               keyboardType: TextInputType.number,
               onChanged: onTextChanged,
               style: const TextStyle(color: Colors.white,),
@@ -104,14 +105,6 @@ class InputSection extends StatelessWidget {
               child: buildRow('To:', context, false),
             ),
             const Spacer(),
-            ElevatedButton(
-              onPressed: () => performConversion(baseCurrency.code, targetCurrency.code),
-              child: const Text('Convert'),
-              style: ElevatedButton.styleFrom(
-                alignment: Alignment.center,
-                minimumSize: const Size.fromHeight(45),
-              ),
-            ),
           ],
         ),
       ),

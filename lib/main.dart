@@ -101,12 +101,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void onSwapCurrencies() {
-    var newBase = _targetCurrency;
-    var newTarget = _baseCurrency;
+    CurrencyData newBase = _targetCurrency;
+    CurrencyData newTarget = _baseCurrency;
     setState(() {
       _baseCurrency = newBase;
       _targetCurrency = newTarget;
     });
+    performConversion(newBase.code, newTarget.code);
   }
 
   void onSelectCurrency(Currency currency, bool isBase) {
@@ -119,11 +120,13 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         _baseCurrency = newCurrency;
       });
+      performConversion(newCurrency.code, _targetCurrency.code);
       return;
     }
     setState(() {
       _targetCurrency = newCurrency;
     });
+    performConversion(_baseCurrency.code, newCurrency.code);
   }
 
   @override
@@ -137,14 +140,15 @@ class _MyHomePageState extends State<MyHomePage> {
         children: <Widget>[
           InputSection(
             onTextChanged: onBaseAmountChanged,
-            performConversion: performConversion,
+            performConversion: () => performConversion(_baseCurrency.code, _targetCurrency.code),
             baseCurrency: _baseCurrency,
             targetCurrency: _targetCurrency,
             onSwapCurrencies: onSwapCurrencies,
             onSelectCurrency: onSelectCurrency,
+            baseAmount: _baseAmount.toString(),
           ),
           Text(
-            _conversionResult.toString(),
+            _targetCurrency.symbol + ' ' + _conversionResult.toString(),
             style: const TextStyle(fontSize: 32, color: Colors.white,),
           ),
           SizedBox(
@@ -153,6 +157,8 @@ class _MyHomePageState extends State<MyHomePage> {
             child: ConversionChart(
               conversionData: _historicalConversions,
               gradientColors: handleGradientColors(),
+              baseCurrency: _baseCurrency,
+              targetCurrency: _targetCurrency,
             ),
           ),
         ],

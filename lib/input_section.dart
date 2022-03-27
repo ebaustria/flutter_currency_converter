@@ -3,59 +3,29 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class InputSection extends StatefulWidget {
-  const InputSection({
+import 'currency_data.dart';
+
+class InputSection extends StatelessWidget {
+  InputSection({
     Key? key,
     required this.onTextChanged,
     required this.performConversion,
+    required this.baseCurrency,
+    required this.targetCurrency,
+    required this.onSwapCurrencies,
+    required this.onSelectCurrency,
   }) : super(key: key);
   final Function(String) onTextChanged;
   final Function(String, String) performConversion;
+  final Function() onSwapCurrencies;
+  final Function(Currency currency, bool isBase) onSelectCurrency;
+  final CurrencyData baseCurrency;
+  final CurrencyData targetCurrency;
 
-  @override
-  _InputSectionState createState() => _InputSectionState();
-}
-
-class _InputSectionState extends State<InputSection> {
-  Map<String, dynamic> _baseCurrency = {'code': 'USD',
-    'emoji': '🇺🇸', 'symbol': '\$'};
-  Map<String, dynamic> _targetCurrency = {'code': 'EUR',
-    'emoji': '🇪🇺', 'symbol': '€'};
   final _baseController = TextEditingController(text: '1');
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  void selectCurrency(Currency currency, bool isBase) {
-    var newCurrency = {
-      'code': currency.code,
-      'emoji': CurrencyUtils.currencyToEmoji(currency),
-      'symbol': currency.symbol
-    };
-    if (isBase) {
-      setState(() {
-        _baseCurrency = newCurrency;
-      });
-      return;
-    }
-    setState(() {
-      _targetCurrency = newCurrency;
-    });
-  }
-
-  void swapCurrencies() {
-    var newBase = _targetCurrency;
-    var newTarget = _baseCurrency;
-    setState(() {
-      _baseCurrency = newBase;
-      _targetCurrency = newTarget;
-    });
-  }
-
-  Widget buildRow(String text, bool isBase) {
-    Map<String, dynamic> currency = isBase ? _baseCurrency : _targetCurrency;
+  Widget buildRow(String text, BuildContext context, bool isBase) {
+    CurrencyData currency = isBase ? baseCurrency : targetCurrency;
     const flexSize = 3;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -74,13 +44,13 @@ class _InputSectionState extends State<InputSection> {
         Flexible(
           flex: flexSize,
           child: ElevatedButton(
-            onPressed: () {
-              showCurrencyPicker(
-                context: context,
-                onSelect: (currency) => selectCurrency(currency, isBase),
-              );
-            },
-            child: Text(currency['emoji'] + '     ' + currency['symbol'])
+              onPressed: () {
+                showCurrencyPicker(
+                  context: context,
+                  onSelect: (currency) => onSelectCurrency(currency, isBase),
+                );
+              },
+              child: Text(currency.emoji + '     ' + currency.symbol)
           ),
         ),
         const Spacer(),
@@ -90,7 +60,7 @@ class _InputSectionState extends State<InputSection> {
             child: TextField(
               controller: _baseController,
               keyboardType: TextInputType.number,
-              onChanged: widget.onTextChanged,
+              onChanged: onTextChanged,
               style: const TextStyle(color: Colors.white,),
               decoration: const InputDecoration(
                 enabledBorder: UnderlineInputBorder(
@@ -118,24 +88,24 @@ class _InputSectionState extends State<InputSection> {
             const Spacer(),
             Flexible(
               flex: 2,
-              child: buildRow('From:  ', true),
+              child: buildRow('From:  ', context, true),
             ),
             const Spacer(),
             Flexible(
               flex: 2,
               child: ElevatedButton(
-                  onPressed: swapCurrencies,
+                  onPressed: onSwapCurrencies,
                   child: const Icon(MdiIcons.swapVertical)
               ),
             ),
             const Spacer(),
             Flexible(
               flex: 2,
-              child: buildRow('To:', false),
+              child: buildRow('To:', context, false),
             ),
             const Spacer(),
             ElevatedButton(
-              onPressed: () => widget.performConversion(_baseCurrency['code'], _targetCurrency['code']),
+              onPressed: () => performConversion(baseCurrency.code, targetCurrency.code),
               child: const Text('Convert'),
               style: ElevatedButton.styleFrom(
                 alignment: Alignment.center,
@@ -146,11 +116,5 @@ class _InputSectionState extends State<InputSection> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _baseController.dispose();
-    super.dispose();
   }
 }

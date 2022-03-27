@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_currency_converter/conversion_chart.dart';
 import 'package:http/http.dart' as http;
 import 'conversion.dart';
+import 'currency_data.dart';
 import 'input_section.dart';
 
 void main() {
@@ -38,11 +40,15 @@ class _MyHomePageState extends State<MyHomePage> {
   double _conversionResult = 0;
   List<MapEntry<String, dynamic>> _historicalConversions = [];
   double _baseAmount = 1;
+  CurrencyData _baseCurrency = CurrencyData.fromJson({'code': 'USD',
+    'emoji': '🇺🇸', 'symbol': '\$'});
+  CurrencyData _targetCurrency = CurrencyData.fromJson({'code': 'EUR',
+    'emoji': '🇪🇺', 'symbol': '€'});
 
   @override
   void initState() {
     super.initState();
-    performConversion('USD', 'EUR');
+    performConversion(_baseCurrency.code, _targetCurrency.code);
   }
 
   Uri getURL(String base, String target) {
@@ -94,6 +100,32 @@ class _MyHomePageState extends State<MyHomePage> {
     ];
   }
 
+  void onSwapCurrencies() {
+    var newBase = _targetCurrency;
+    var newTarget = _baseCurrency;
+    setState(() {
+      _baseCurrency = newBase;
+      _targetCurrency = newTarget;
+    });
+  }
+
+  void onSelectCurrency(Currency currency, bool isBase) {
+    var newCurrency = CurrencyData.fromJson({
+      'code': currency.code,
+      'emoji': CurrencyUtils.currencyToEmoji(currency),
+      'symbol': currency.symbol
+    });
+    if (isBase) {
+      setState(() {
+        _baseCurrency = newCurrency;
+      });
+      return;
+    }
+    setState(() {
+      _targetCurrency = newCurrency;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,6 +138,10 @@ class _MyHomePageState extends State<MyHomePage> {
           InputSection(
             onTextChanged: onBaseAmountChanged,
             performConversion: performConversion,
+            baseCurrency: _baseCurrency,
+            targetCurrency: _targetCurrency,
+            onSwapCurrencies: onSwapCurrencies,
+            onSelectCurrency: onSelectCurrency,
           ),
           Text(
             _conversionResult.toString(),

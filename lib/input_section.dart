@@ -6,7 +6,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'currency_data.dart';
 
 class InputSection extends StatelessWidget {
-  InputSection({
+  const InputSection({
     Key? key,
     required this.onTextChanged,
     required this.performConversion,

@@ -47,6 +47,19 @@ class _ConversionChartState extends State<ConversionChart> {
         ? elA : elB).value;
   }
 
+  int determinePrecision(String value) {
+    String figure = value.split('.')[0];
+    switch (figure.length) {
+      case 1:
+        return 4;
+      case 2:
+        return 3;
+      case 3:
+        return 2;
+      default:
+        return 1;
+    }
+  }
 
   Widget leftTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(
@@ -54,7 +67,7 @@ class _ConversionChartState extends State<ConversionChart> {
       fontWeight: FontWeight.bold,
       fontSize: 10,
     );
-    int precisionLevel = value.toString().split('.')[0].length > 1 ? 1 : 4;
+    int precisionLevel = determinePrecision(value.toString());
     if (value == maximumRate() + horizontalInterval() || value == minimumRate() - horizontalInterval()) {
       return Container();
     }
@@ -124,18 +137,18 @@ class _ConversionChartState extends State<ConversionChart> {
         ),
         titlesData: FlTitlesData(
           show: true,
-
           rightTitles: AxisTitles(
             sideTitles: SideTitles(showTitles: false),
           ),
           topTitles: AxisTitles(
+            axisNameSize: 30,
             sideTitles: SideTitles(
               showTitles: false,
               getTitlesWidget: (value, meta) => Container(),
             ),
             axisNameWidget: Text(
               'Conversion Rates ' + widget.baseCurrency.code + ' => ' + widget.targetCurrency.code,
-              style: TextStyle(color: Colors.white,),
+              style: const TextStyle(color: Colors.white, fontSize: 20),
             ),
           ),
           bottomTitles: AxisTitles(
@@ -194,6 +207,8 @@ class _ConversionChartState extends State<ConversionChart> {
           ),
         ],
       ),
+      swapAnimationDuration: const Duration(milliseconds: 500),
+      swapAnimationCurve: Curves.linear,
     );
   }
 

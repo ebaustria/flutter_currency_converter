@@ -154,8 +154,9 @@ class _MyHomePageState extends State<MyHomePage> {
             _targetCurrency.symbol + ' ' + _conversionResult.toString(),
             style: const TextStyle(fontSize: 32, color: Colors.white,),
           ),
+          Container(height: 15,),
           SizedBox(
-            height: 250,
+            height: 260,
             width: 300,
             child: _isLoading ? const SpinKitWave(
               color: Colors.indigo,

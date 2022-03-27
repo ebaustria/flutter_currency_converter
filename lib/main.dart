@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_currency_converter/conversion_chart.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
 import 'conversion.dart';
 import 'currency_data.dart';
@@ -37,6 +38,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool _isLoading = true;
   double _conversionResult = 0;
   List<MapEntry<String, dynamic>> _historicalConversions = [];
   double _baseAmount = 1;
@@ -77,6 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         _historicalConversions = conversion.conversionRate.entries.toList();
         _conversionResult = conversion.conversionRate.values.last * _baseAmount;
+        _isLoading = false;
       });
     } else {
       throw Exception('Failed to fetch data');
@@ -154,12 +157,16 @@ class _MyHomePageState extends State<MyHomePage> {
           SizedBox(
             height: 250,
             width: 300,
-            child: ConversionChart(
-              conversionData: _historicalConversions,
-              gradientColors: handleGradientColors(),
-              baseCurrency: _baseCurrency,
-              targetCurrency: _targetCurrency,
-            ),
+            child: _isLoading ? const SpinKitWave(
+              color: Colors.indigo,
+              duration: Duration(milliseconds: 1600),
+            )
+            : ConversionChart(
+                conversionData: _historicalConversions,
+                gradientColors: handleGradientColors(),
+                baseCurrency: _baseCurrency,
+                targetCurrency: _targetCurrency,
+              ),
           ),
         ],
       ),

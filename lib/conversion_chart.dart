@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_currency_converter/currency_data.dart';
 import 'dart:math';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class ConversionChart extends StatefulWidget {
   const ConversionChart({
@@ -195,7 +194,6 @@ class _ConversionChartState extends State<ConversionChart> {
           ),
         ],
       ),
-
     );
   }
 
